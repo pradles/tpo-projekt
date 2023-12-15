@@ -1,4 +1,108 @@
 <app-menu-bar></app-menu-bar>
-<div class="ml-64">
-    <p>expenses works!</p>
+<div class="flex h-screen">
+    <div class="ml-64  h-full w-full p-8 background">
+
+        
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3 w-1/2">
+                        Expense
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Paid by
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Price
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Edit</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    <ng-container *ngFor="let expense of expenses; let i = index">
+                      <!-- Main row for each expense -->
+                      <tr (click)="toggleDetails(i)" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                          {{ expense.expense }}
+                        </th>
+                        <td class="px-6 py-4">
+                          {{ expense.paidBy }}
+                        </td>
+                        <td class="px-6 py-4">
+                          {{ expense.date }}
+                        </td>
+                        <td class="px-6 py-4">
+                          {{ expense.price }}€
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <svg *ngIf="expensesDetails != i" class="w-7 h-7 align-right cursor-pointer transition-transform transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <!-- SVG path data for the arrow icon -->
+                              <path d="M5.70711 9.71069C5.31658 10.1012 5.31658 10.7344 5.70711 11.1249L10.5993 16.0123C11.3805 16.7927 12.6463 16.7924 13.4271 16.0117L18.3174 11.1213C18.708 10.7308 18.708 10.0976 18.3174 9.70708C17.9269 9.31655 17.2937 9.31655 16.9032 9.70708L12.7176 13.8927C12.3271 14.2833 11.6939 14.2832 11.3034 13.8927L7.12132 9.71069C6.7308 9.32016 6.09763 9.32016 5.70711 9.71069Z" class="fill-current text-gray-500"></path>
+                            </svg>
+                            <svg *ngIf="expensesDetails == i" class="w-7 h-7 align-right cursor-pointer transition-transform transform rotate-180" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <!-- SVG path data for the arrow icon -->
+                              <path d="M5.70711 9.71069C5.31658 10.1012 5.31658 10.7344 5.70711 11.1249L10.5993 16.0123C11.3805 16.7927 12.6463 16.7924 13.4271 16.0117L18.3174 11.1213C18.708 10.7308 18.708 10.0976 18.3174 9.70708C17.9269 9.31655 17.2937 9.31655 16.9032 9.70708L12.7176 13.8927C12.3271 14.2833 11.6939 14.2832 11.3034 13.8927L7.12132 9.71069C6.7308 9.32016 6.09763 9.32016 5.70711 9.71069Z" class="fill-current text-gray-500"></path>
+                            </svg>
+                          </td>                          
+                      </tr>
+                  
+                      <!-- Details row (hidden by default, shown when toggled) -->
+                      <tr *ngIf="expensesDetails == i" class="bg-white border-b dark:bg-gray-700 dark:border-gray-700 font-bold text-xs text-white">
+                        <td class="px-6 py-2">
+                          Description
+                        </td>
+                        <td class="px-6 py-2">
+                          User
+                        </td>
+                        <td class="px-6 py-2">
+                          Percentage
+                        </td>
+                        <td colspan="2" class="px-6 py-2">
+                          Total share
+                        </td>
+                      </tr>
+                      <ng-container *ngIf="expensesDetails == i">
+                        <tr *ngFor="let user of expense.users; let isFirst = first" class="bg-white  dark:bg-gray-700   font-bold text-xs">
+                            <td *ngIf="isFirst" class="px-6 py-2" [attr.rowspan]="expense.users.length" [style.max-width.%]="25">
+                              {{ expense.description }}
+                            </td>
+                            <td class="px-6 py-2">
+                              {{ user.name }}
+                            </td>
+                            <td class="px-6 py-2">
+                              {{ user.percentage *100}}%
+                            </td>
+                            <td colspan="2" class="px-6 py-2">
+                                {{ (user.percentage * expense.price) | number:'1.2-2' }}
+                              </td>                              
+                          </tr>                          
+                      </ng-container>
+                    </ng-container>
+                  
+            </tbody>
+            <tfoot>
+                <tr class="font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border-t border-slate-800">
+                  <th scope="row" class="px-6 py-3 text-base">Total</th>
+                  <td class="px-6 py-3"></td>
+                  <td class="px-6 py-3"></td>
+                  <td class="px-6 py-3">{{ getTotalExpenses() | number: '1.2-2' }}€</td>
+                  <td class="px-6 py-3"></td>
+                </tr>
+              </tfoot>
+              
+        </table>
+    </div>
+
+    </div>
 </div>
+  
+  
+
