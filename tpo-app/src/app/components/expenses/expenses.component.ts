@@ -1,42 +1,37 @@
 import { Component } from '@angular/core';
+import { CostsService } from '../../services/costs.service';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
-  styleUrl: './expenses.component.css'
+  styleUrl: './expenses.component.css',
+  providers: [DatePipe],
 })
 export class ExpensesComponent {
+  date: any;
+
+  constructor(private costsService: CostsService, private datePipe: DatePipe) {
+      this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    }
+    
+  expenses = this.costsService.getExpenses();
+  users = this.costsService.getUsers();
+
+  expenseName: string = '';
+  paidBy: number = -1;
+  price: any = undefined;
+  description: string = '';
+  usersPercentages: { name: number; percentage: number }[] = this.users.map((_, index) => ({
+    name: index,
+    percentage: +(100 / this.users.length).toFixed(1),
+  }));
+
+
   expensesDetails: number = -1;
 
-  expenses = [
-    { expense: 'Gas money', 
-      paidBy: 'Miha', 
-      price: 43.3, 
-      date: '2. 1. 2024', 
-      users: [ {name: 'Miha', percentage: 0.4}, {name: 'Bojan', percentage: 0.6} ], 
-      description: 'Lorem ipsum ' },
-
-    { expense: 'Lunch at lunch place', 
-      paidBy: 'Bojan', 
-      price: 50.44, 
-      date: '3. 2. 2022', 
-      users: [ {name: 'Miha', percentage: 0.5}, {name: 'Bojan', percentage: 0.5} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. ' },
-
-    { expense: 'Lunch at lunch place2', 
-      paidBy: 'Bojan', 
-      price: 503.44, 
-      date: '3. 2. 2022', 
-      users: [ {name: 'Miha', percentage: 0.5}, {name: 'Bojan', percentage: 0.5} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. ' },
-
-    { expense: 'Lunch at lunch place3', 
-      paidBy: 'Bojan', 
-      price: 210.44, 
-      date: '3. 2. 2022', 
-      users: [ {name: 'Miha', percentage: 0.5}, {name: 'Bojan', percentage: 0.5} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. ' },
-  ];
+  
 
   toggleDetails(providedExpensesIndex: number) {
     // If we clicked on the same dropdown again make it dissapear
@@ -49,5 +44,65 @@ export class ExpensesComponent {
   getTotalExpenses(): number {
     return this.expenses.reduce((total, expense) => total + expense.price, 0);
   }
+
+  getUserName(id: number) {
+    return this.costsService.getUser(id);
+  }
+
+  addExpense() {
+    if(this.checkExpenseInput()){
+      this.costsService.addExpense(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
+
+      // Set back to default values
+      this.expenseName = '';
+      this.paidBy = -1;
+      this.price = undefined;
+      this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+      this.usersPercentages = this.users.map((_, index) => ({
+        name: index,
+        percentage: +(100 / this.users.length).toFixed(1),
+      }));
+      this.description = '';
+    }
+  }
+
+  checkPercentages() {
+    const sum = this.usersPercentages.reduce((total, user) => total + user.percentage, 0);
+    if (sum > 99.8 && sum <= 100) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  checkExpenseInput() {
+    if (this.expenseName === '') {
+      this.showAlert('Expense name cannot be empty');
+      return false;
+    }
+  
+    if (this.paidBy === -1) {
+      this.showAlert('Please select who paid for the expense');
+      return false;
+    }
+  
+    if (this.price <= 0) {
+      this.showAlert('Price must be greater than 0');
+      return false;
+    }
+  
+    if (!this.checkPercentages()) {
+      this.showAlert('Invalid percentages. Please adjust.');
+      return false;
+    }
+  
+    // If all conditions pass, return true
+    return true;
+  }
+  
+  private showAlert(message: string): void {
+    alert(message);
+  }
+  
 
 }

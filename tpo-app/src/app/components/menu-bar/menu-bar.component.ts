@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CostsService } from '../../services/costs.service';
 
 @Component({
   selector: 'app-menu-bar',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './menu-bar.component.css'
 })
 export class MenuBarComponent {
+  constructor(private costsService: CostsService) {}
 
+  getUserNumber() {
+    return this.costsService.getUsersLenght();
+  }
 }

@@ -10,7 +10,8 @@ import { OptionsComponent } from './components/options/options.component';
 import { MenuBarComponent } from './components/menu-bar/menu-bar.component';
 import { UsersComponent } from './components/users/users.component';
 
-import { FormsModule } from '@angular/forms';
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -28,7 +29,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
