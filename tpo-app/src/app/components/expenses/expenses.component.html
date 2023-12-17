@@ -80,7 +80,7 @@
                         {{ user.percentage }}%
                       </td>
                       <td colspan="2" class="px-6 py-2">
-                          {{ (user.percentage/100 * expense.price) | number:'1.2-2' }}
+                          {{ (user.percentage/100 * expense.price) | number:'1.2-2' }}€
                         </td>                              
                     </tr>                          
                 </ng-container>
@@ -109,7 +109,7 @@
           <!-- Paid by -->
           <select id="paidBy" [(ngModel)]="paidBy" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-3">
             <option selected disabled [value]=-1 >Paid By</option>
-            <option *ngFor="let user of users; let i = index" [value]="i" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-3">{{ user.name }}</option>
+            <option *ngFor="let user of users; let i = index" [value]=i class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-3">{{ user.name }}</option>
           </select>
           <!-- Date -->
           <input

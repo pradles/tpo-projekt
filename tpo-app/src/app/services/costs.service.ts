@@ -52,7 +52,8 @@ export class CostsService {
   }
 
   addExpense(expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string) {
-    const newExpense = { expenseName, paidBy, price, date, users, description};
+    let paidByInt: number = +paidBy;
+    const newExpense = { expenseName: expenseName, paidBy: paidByInt, price: price, date: date, users: users, description: description};
     this.expenses.push(newExpense);
   }
 
