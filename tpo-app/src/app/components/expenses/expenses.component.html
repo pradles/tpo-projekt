@@ -74,7 +74,7 @@
                         {{ expense.description }}
                       </td>
                       <td class="px-6 py-2">
-                        {{ getUserName(user.name) }}
+                        {{ getUserName(user.userId) }}
                       </td>
                       <td class="px-6 py-2">
                         {{ user.percentage }}%
@@ -145,7 +145,7 @@
                 <ng-container *ngFor="let user of users; let i = index">
                   <!-- Main row for each expense -->
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white" [(ngModel)]="usersPercentages[i].name">
+                    <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white" [(ngModel)]="usersPercentages[i].userId">
                       {{ user.name }}
                     </th>
                     <td class="px-4 py-2">

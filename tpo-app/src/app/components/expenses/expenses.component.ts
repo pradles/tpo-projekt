@@ -23,8 +23,8 @@ export class ExpensesComponent {
   paidBy: number = -1;
   price: any = undefined;
   description: string = '';
-  usersPercentages: { name: number; percentage: number }[] = this.users.map((_, index) => ({
-    name: index,
+  usersPercentages: { userId: number; percentage: number }[] = this.users.map((_, index) => ({
+    userId: index,
     percentage: +(100 / this.users.length).toFixed(1),
   }));
 
@@ -46,7 +46,7 @@ export class ExpensesComponent {
   }
 
   getUserName(id: number) {
-    return this.costsService.getUser(id);
+    return this.costsService.getUserName(id);
   }
 
   addExpense() {
@@ -59,7 +59,7 @@ export class ExpensesComponent {
       this.price = undefined;
       this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
       this.usersPercentages = this.users.map((_, index) => ({
-        name: index,
+        userId: index,
         percentage: +(100 / this.users.length).toFixed(1),
       }));
       this.description = '';
