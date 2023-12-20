@@ -57,6 +57,12 @@ export class CostsService {
     this.expenses.push(newExpense);
   }
 
+  getSumExpenses(): number {
+    return this.expenses.reduce((total, expense) => total + expense.price, 0);
+  }
+
+
+
   getUsers() {
     return this.users;
   }

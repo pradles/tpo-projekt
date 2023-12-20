@@ -6,6 +6,7 @@
     <!-- Expense Table -->
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
+
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3 w-1/2">
@@ -25,6 +26,7 @@
                     </th>
                 </tr>
             </thead>
+
             <tbody>
               <ng-container *ngFor="let expense of expenses; let i = index">
                 <!-- Main row for each expense -->
@@ -86,6 +88,7 @@
                 </ng-container>
               </ng-container>
             </tbody>
+
             <tfoot>
                 <tr class="font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 border-t border-slate-800">
                   <th scope="row" class="px-6 py-3 text-base">Total</th>
@@ -125,6 +128,7 @@
       </div>
       <!-- Second column -->
       <div>
+        <!-- Description -->
         <textarea id="description" [(ngModel)]="description"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full h-5/6 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-3 resize-none" placeholder="Description"></textarea>
       </div>
@@ -143,7 +147,7 @@
             </thead>
             <tbody>
                 <ng-container *ngFor="let user of users; let i = index">
-                  <!-- Main row for each expense -->
+                  <!-- Percentage -->
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white" [(ngModel)]="usersPercentages[i].userId">
                       {{ user.name }}

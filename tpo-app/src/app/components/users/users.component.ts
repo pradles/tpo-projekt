@@ -20,14 +20,17 @@ export class UsersComponent {
     this.calculateDebts();
   }
 
+  /**
+   * Calculate the debt for each user
+   */
   private calculateDebts(): void {
-
+    // Go over each expense
     this.expenses.forEach(expense => {
       const { paidBy, price, users } = expense;
-
+      // Go over what each user paid for the expense
       users.forEach((user: any) => {
           const share = (user.percentage / 100) * price;
-
+          // If user didnt pay the actual expense add to his debt
           if (user.userId !== paidBy) {
             const debtor = user.userId;
             const amount = share;
@@ -55,10 +58,18 @@ export class UsersComponent {
     });
   }
 
+  /**
+   * Get user name by id
+   * @param id - id of the user
+   * @returns name of the user
+   */
   getUserName(id: number) {
     return this.costsService.getUserName(id);
   }
 
+  /**
+   * Add user
+   */
   addUser() {
     if(this.checkUsernameInput()){
       this.costsService.addUser(this.username);
@@ -66,6 +77,10 @@ export class UsersComponent {
     }
   }
 
+  /**
+   * Alert if user is empty
+   * @returns true / false
+   */
   checkUsernameInput() {
     if (this.username === '') {
       this.showAlert('Expense name cannot be empty');
@@ -74,6 +89,10 @@ export class UsersComponent {
     return true;
   }
 
+  /**
+   * Shows pop up alert
+   * @param message - string to alert
+   */
   private showAlert(message: string): void {
     alert(message);
   }

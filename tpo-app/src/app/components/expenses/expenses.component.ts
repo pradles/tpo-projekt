@@ -28,11 +28,13 @@ export class ExpensesComponent {
     percentage: +(100 / this.users.length).toFixed(1),
   }));
 
-
-  expensesDetails: number = -1;
+  expensesDetails: number = -1; //which expense details to show
 
   
-
+  /**
+   * Show / hide expenses details on click
+   * @param providedExpensesIndex - what expense was clicked
+   */
   toggleDetails(providedExpensesIndex: number) {
     // If we clicked on the same dropdown again make it dissapear
     if(providedExpensesIndex == this.expensesDetails)
@@ -40,15 +42,26 @@ export class ExpensesComponent {
     else
       this.expensesDetails = providedExpensesIndex;
   }
-
+  /**
+   * Get the summ of all the expenses
+   * @returns the sum of all expenses
+   */
   getTotalExpenses(): number {
-    return this.expenses.reduce((total, expense) => total + expense.price, 0);
+    return this.costsService.getSumExpenses();
   }
 
+  /**
+   * Get user name by id
+   * @param id - id of the user
+   * @returns name of the user
+   */
   getUserName(id: number) {
     return this.costsService.getUserName(id);
   }
 
+  /**
+   * Add expense with the necessary data
+   */
   addExpense() {
     if(this.checkExpenseInput()){
       this.costsService.addExpense(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
@@ -66,6 +79,10 @@ export class ExpensesComponent {
     }
   }
 
+  /**
+   * Checks if the percentages add up to 100 (99.9)
+   * @returns true / false
+   */
   checkPercentages() {
     const sum = this.usersPercentages.reduce((total, user) => total + user.percentage, 0);
     if (sum > 99.8 && sum <= 100) {
@@ -75,6 +92,10 @@ export class ExpensesComponent {
     }
   }
 
+  /**
+   * Check if the given data exists and alerts us if it doesnt
+   * @returns true / false
+   */
   checkExpenseInput() {
     if (this.expenseName === '') {
       this.showAlert('Expense name cannot be empty');
@@ -100,6 +121,10 @@ export class ExpensesComponent {
     return true;
   }
   
+  /**
+   * Shows pop up alert
+   * @param message - string to alert
+   */
   private showAlert(message: string): void {
     alert(message);
   }
