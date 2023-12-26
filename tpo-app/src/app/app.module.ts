@@ -12,6 +12,7 @@ import { UsersComponent } from './components/users/users.component';
 
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ModalComponent } from './components/modal/modal.component';
 
 
 
@@ -24,7 +25,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ExpensesComponent,
     OptionsComponent,
     MenuBarComponent,
-    UsersComponent
+    UsersComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CostsService } from '../../services/costs.service';
 import { DatePipe } from '@angular/common';
 
@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 export class ExpensesComponent {
   date: any;
 
-  constructor(private costsService: CostsService, private datePipe: DatePipe) {
+  constructor(private costsService: CostsService, private datePipe: DatePipe, private ngZone: NgZone) {
       this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     }
     
@@ -28,7 +28,15 @@ export class ExpensesComponent {
     percentage: +(100 / this.users.length).toFixed(1),
   }));
 
+  // popup message input error and remove (if removeExpenseId set to -1 its input error)
+  removeExpenseId = -1;
+  modalMessage = '';
+
   expensesDetails: number = -1; //which expense details to show
+  editExpenseId: number = -1; //which expense we are editing
+
+  isModalOpen: boolean = false;
+
 
   
   /**
@@ -65,18 +73,56 @@ export class ExpensesComponent {
   addExpense() {
     if(this.checkExpenseInput()){
       this.costsService.addExpense(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
-
-      // Set back to default values
-      this.expenseName = '';
-      this.paidBy = -1;
-      this.price = undefined;
-      this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
-      this.usersPercentages = this.users.map((_, index) => ({
-        userId: index,
-        percentage: +(100 / this.users.length).toFixed(1),
-      }));
-      this.description = '';
+      this.clearInputField();
     }
+  }
+
+  /**
+   * Updates expense with editExpenseId
+   */
+  updateExpense() {
+    if(this.checkExpenseInput()){
+      this.costsService.updateExpense(this.editExpenseId,this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
+      this.clearInputField();
+    }
+  }
+
+  /**
+   * Edit selected expense
+   * @param expenseId - expense id
+   */
+  editExpenseInput(expenseId: number) {
+    this.editExpenseId = expenseId;
+    let expenseToEdit = this.costsService.getExpense(expenseId);
+    this.expenseName = expenseToEdit?.expenseName ?? '';
+    this.paidBy = expenseToEdit?.paidBy ?? -1;
+    this.price = expenseToEdit?.price;
+    this.date = expenseToEdit?.date;
+    this.usersPercentages = this.users.map(user => {
+      const matchingUser = expenseToEdit?.users.find(expenseUser => expenseUser.userId === user.id);
+      return {
+        userId: user.id,
+        percentage: matchingUser ? matchingUser.percentage : 0,
+      };
+    });
+    this.description = expenseToEdit?.description ?? ''
+  }
+
+  /**
+   * Sets the inputs to their default values
+   */
+  clearInputField() {
+    this.editExpenseId = -1;
+    // Set back to default values
+    this.expenseName = '';
+    this.paidBy = -1;
+    this.price = undefined;
+    this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    this.usersPercentages = this.users.map((_, index) => ({
+      userId: index,
+      percentage: +(100 / this.users.length).toFixed(1),
+    }));
+    this.description = '';
   }
 
   /**
@@ -98,36 +144,46 @@ export class ExpensesComponent {
    */
   checkExpenseInput() {
     if (this.expenseName === '') {
-      this.showAlert('Expense name cannot be empty');
+      this.toggleModal('Expense name cannot be empty',-1);
       return false;
     }
   
     if (this.paidBy === -1) {
-      this.showAlert('Please select who paid for the expense');
+      this.toggleModal('Please select who paid for the expense');
       return false;
     }
-  
-    if (this.price <= 0) {
-      this.showAlert('Price must be greater than 0');
+
+    if (this.price == undefined) {
+      this.toggleModal('Price must be specified');
+      return false;
+    }
+
+    if (this.price < 0) {
+      this.toggleModal('Price must be greater than 0');
       return false;
     }
   
     if (!this.checkPercentages()) {
-      this.showAlert('Invalid percentages. Please adjust.');
+      this.toggleModal('Invalid percentages. Please adjust.');
       return false;
     }
   
     // If all conditions pass, return true
     return true;
   }
-  
+
+
   /**
-   * Shows pop up alert
-   * @param message - string to alert
+   * Open pop up for error or deletion of expense
+   * @param message - displayed message
+   * @param expenseId - id of expense, if nothing provided set to -1
    */
-  private showAlert(message: string): void {
-    alert(message);
+  toggleModal(message: string, expenseId: number = -1) {
+    setTimeout(() => {
+      this.modalMessage = message;
+      this.removeExpenseId = expenseId;
+      this.isModalOpen = !this.isModalOpen;
+    }, 0);
   }
-  
 
 }
