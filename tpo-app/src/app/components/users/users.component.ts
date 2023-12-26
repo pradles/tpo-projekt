@@ -17,45 +17,7 @@ export class UsersComponent {
   constructor(private costsService: CostsService) {
     this.users = this.costsService.getUsers();
     this.expenses = this.costsService.getExpenses();
-    this.calculateDebts();
-  }
-
-  /**
-   * Calculate the debt for each user
-   */
-  private calculateDebts(): void {
-    // Go over each expense
-    this.expenses.forEach(expense => {
-      const { paidBy, price, users } = expense;
-      // Go over what each user paid for the expense
-      users.forEach((user: any) => {
-          const share = (user.percentage / 100) * price;
-          // If user didnt pay the actual expense add to his debt
-          if (user.userId !== paidBy) {
-            const debtor = user.userId;
-            const amount = share;
-            
-            const existingUserIndex = this.userDebts.findIndex(debt => debt.userId === paidBy);
-
-            if (existingUserIndex !== -1) {
-              // User already exists, check if the debts.user exists
-              const existingDebtorIndex = this.userDebts[existingUserIndex].debts.findIndex((debt:any) => debt.userId === debtor);
-
-              if (existingDebtorIndex !== -1) {
-                // Debtor already exists, update the amount
-                this.userDebts[existingUserIndex].debts[existingDebtorIndex].amount += amount;
-              } else {
-                // Debtor doesn't exist, add a new debt
-                this.userDebts[existingUserIndex].debts.push({ userId: debtor, amount: amount });
-              }
-            } else {
-              // User doesn't exist, add a new entry
-              this.userDebts.push({ userId: paidBy, debts: [{ userId: debtor, amount: amount }] });
-            }
-          }
-      
-      });
-    });
+    this.userDebts = this.costsService.calculateDebts();
   }
 
   /**

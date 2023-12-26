@@ -9,28 +9,32 @@ export class CostsService {
 
   // Zamenjat szi backendm
   expenses = [ 
-    { expenseName: 'Gas money', 
+    { id: 0,
+      expenseName: 'Gas money', 
       paidBy: 0, 
       price: 100, 
       date: '2. 1. 2024', 
       users: [ {userId: 0, percentage: 40}, {userId: 1, percentage: 60} ], 
       description: 'Lorem ipsum ' },
 
-    { expenseName: 'Lunch at lunch place', 
+    { id: 1,
+      expenseName: 'Lunch at lunch place', 
       paidBy: 1, 
       price: 50.44, 
       date: '3. 2. 2022', 
       users: [ {userId: 0, percentage: 33.3}, {userId: 1, percentage: 33.3}, {userId: 2, percentage: 33.3} ],
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' },
 
-    { expenseName: 'Lunch at lunch place2', 
+    { id: 2,
+      expenseName: 'Lunch at lunch place2', 
       paidBy: 2, 
       price: 503.44, 
       date: '3. 2. 2022', 
       users: [ {userId: 0, percentage: 30}, {userId: 1, percentage: 50}, {userId: 2, percentage: 20} ],
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. elit. Praesent aliquet tincidunt purus at ornare. ' },
 
-    { expenseName: 'Lunch at lunch place3', 
+    { id: 3,
+      expenseName: 'Lunch at lunch place3', 
       paidBy: 1, 
       price: 210.44, 
       date: '3. 2. 2022', 
@@ -51,9 +55,14 @@ export class CostsService {
     return this.expenses;
   }
 
+  getExpense(providedExpenseId: number) {
+    return this.expenses.find(expense => expense.id = providedExpenseId);
+  }
+
   addExpense(expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string) {
     let paidByInt: number = +paidBy;
-    const newExpense = { expenseName: expenseName, paidBy: paidByInt, price: price, date: date, users: users, description: description};
+    let newIndex = this.expenses[this.expenses.length-1].id+1;
+    const newExpense = { id: newIndex, expenseName: expenseName, paidBy: paidByInt, price: price, date: date, users: users, description: description};
     this.expenses.push(newExpense);
   }
 
@@ -61,8 +70,7 @@ export class CostsService {
     return this.expenses.reduce((total, expense) => total + expense.price, 0);
   }
 
-
-
+  
   getUsers() {
     return this.users;
   }
@@ -79,6 +87,47 @@ export class CostsService {
 
   getUsersLenght() {
     return this.users.length;
+  }
+
+  /**
+   * Calculate the debt for each user
+   */
+  calculateDebts() {
+    let userDebts: any[] = [];
+    // Go over each expense
+    this.expenses.forEach(expense => {
+      const { paidBy, price, users } = expense;
+      // Go over what each user paid for the expense
+      users.forEach((user: any) => {
+          const share = (user.percentage / 100) * price;
+          // If user didnt pay the actual expense add to his debt
+          if (user.userId !== paidBy) {
+            
+            const debtor = user.userId;
+            const amount = share;
+            
+            const existingUserIndex = userDebts.findIndex(debt => debt.userId === paidBy);
+
+            if (existingUserIndex !== -1) {
+              // User already exists, check if the debts.user exists
+              const existingDebtorIndex = userDebts[existingUserIndex].debts.findIndex((debt:any) => debt.userId === debtor);
+
+              if (existingDebtorIndex !== -1) {
+                // Debtor already exists, update the amount
+                userDebts[existingUserIndex].debts[existingDebtorIndex].amount += amount;
+              } else {
+                // Debtor doesn't exist, add a new debt
+                userDebts[existingUserIndex].debts.push({ userId: debtor, amount: amount });
+              }
+            } else {
+              // User doesn't exist, add a new entry
+              userDebts.push({ userId: paidBy, debts: [{ userId: debtor, amount: amount }] });
+            }
+          }
+      
+      });
+    });
+    return userDebts;
   }
 
 
