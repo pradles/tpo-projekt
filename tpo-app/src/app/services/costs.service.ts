@@ -92,6 +92,26 @@ export class CostsService {
   /**
    * Calculate the debt for each user
    */
+  calculateTotalExpenses(): { userId: number; totalExpense: number }[] {
+    const userTotalExpenses: { userId: number; totalExpense: number }[] = [];
+
+    // Initialize userTotalExpenses array with zeros for each user
+    this.users.forEach(user => {
+      userTotalExpenses.push({ userId: user.id, totalExpense: 0 });
+    });
+
+    // Go over each expense and accumulate the total expenses for each user
+    this.expenses.forEach(expense => {
+      const { paidBy, price, users } = expense;
+
+      users.forEach(user => {
+        const share = (user.percentage / 100) * price;
+        userTotalExpenses[user.userId].totalExpense += share;
+      });
+    });
+
+    return userTotalExpenses;
+  }
   calculateDebts() {
     let userDebts: any[] = [];
     // Go over each expense
