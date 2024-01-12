@@ -8,7 +8,10 @@ export class CostsService {
 
   constructor() { }
 
+
   // Zamenjat szi backendm
+  private createdRooms: string[] = [];
+
   expenses = [ 
     { id: 0,
       expenseName: 'Gas money', 
@@ -220,6 +223,15 @@ export class CostsService {
       });
     });
     return userDebts;
+  }
+
+  createRoom(roomName: string, roomPassword: string) {
+    // Check if the room with the same name already exists
+    if (this.createdRooms.includes(roomName)) {
+      return ('Room with the same name already exists');
+    }
+    this.createdRooms.push(roomName);
+    return (roomName);
   }
 
 

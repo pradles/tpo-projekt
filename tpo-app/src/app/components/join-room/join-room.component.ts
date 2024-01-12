@@ -2,6 +2,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CostsService } from '../../services/costs.service';
 
 @Component({
   selector: 'app-join-room',
@@ -11,8 +12,51 @@ import { AuthService } from '../../services/auth.service';
 export class JoinRoomComponent {
   roomName: string = '';
   roomPassword: string = '';
+  roomPasswordRepeat: string = '';
+  showCreateRoom: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  isModalOpen: boolean = false;
+  removeExpenseId = -1;
+  modalMessage = '';
+
+  constructor(private authService: AuthService, 
+              private router: Router, 
+              private cost: CostsService) {}
+
+  toggleCreateRoom() {
+    this.showCreateRoom = !this.showCreateRoom;
+  }
+
+  createNewRoom() {
+    if (this.roomName && this.roomPassword) {
+      if (this.roomPassword === this.roomPasswordRepeat) {
+        console.log(this.cost.createRoom(this.roomName, this.roomPassword));
+        this.toggleCreateRoom();
+        this.roomName = ''; 
+        this.roomPassword = '';
+        this.roomPasswordRepeat = '';
+      } else {
+        this.toggleModal('Passwords do not match');
+        // console.error('Passwords do not match');
+      }
+    } else {
+      this.toggleModal('Room name or password cannot be empty');
+      // console.error('Room name or password cannot be empty');
+    }
+  }
+
+  /**
+   * Open pop up for error or deletion of expense
+   * @param message - displayed message
+   * @param expenseId - id of expense, if nothing provided set to -1
+   */
+  toggleModal(message: string, expenseId: number = -1) {
+    setTimeout(() => {
+      this.modalMessage = message;
+      this.removeExpenseId = expenseId;
+      this.isModalOpen = !this.isModalOpen;
+    }, 0);
+  }
 
   enter(): void {
     const isAuthenticated = this.authService.enter(this.roomName, this.roomPassword);
