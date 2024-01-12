@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth.guard';
 
+import { DocumentationComponent } from './components/documentation/documentation.component';
 import { DashboradComponent } from './components/dashborad/dashborad.component';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { OptionsComponent } from './components/options/options.component';
@@ -10,6 +11,7 @@ import { JoinRoomComponent } from './components/join-room/join-room.component';
 
 const routes: Routes = [
   { path: 'dashboard', component: DashboradComponent, canActivate: [AuthGuard] },
+  { path: 'documentation', component: DocumentationComponent, canActivate: [AuthGuard] },
   { path: 'expenses', component: ExpensesComponent, canActivate: [AuthGuard] },
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
   { path: 'options', component: OptionsComponent, canActivate: [AuthGuard] },
