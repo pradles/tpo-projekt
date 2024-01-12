@@ -1,18 +1,12 @@
-
+<div class="flex h-screen">
     <app-menu-bar></app-menu-bar>
   
-    <div class="flex h-screen ml-64 w-full h-full p-8 background">
+    <div class="ml-64 w-full h-full p-8 background">
       <div class="w-1/2 h-64 bg-gray-800 mt-8 rounded-lg pl-5 p-4 grid grid-cols-3 gap-4 relative">
-        
-          
-            <div class="text-xl font-bold mb-3"><button class="btn-logout" onclick="logout()">Odjava</button></div>
-            
-          </div>
-        
-      
+        <div class="text-xl font-bold mb-3">
+          <button class="btn-logout" (click)="logout()">Odjava</button>
+        </div>
+      </div>
     </div>
-  
-  
-
-  
+  </div>
   
