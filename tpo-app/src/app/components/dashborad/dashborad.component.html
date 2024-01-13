@@ -1,19 +1,48 @@
-<app-menu-bar></app-menu-bar>
+<div class="flex h-screen">
+    <div class="w-64 bg-gray-800 text-white">
+        <app-menu-bar></app-menu-bar>
+    </div>
 
-<div class="ml-64 w-full h-full p-8 background flex h-screen">
-    
+    <div class="flex-1 p-8 background flex flex-col">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 max-w-screen-lg mx-auto">
 
-    <p class="text-lg text-white mb-20">Aplikacija za urejanje skupinskih stroškov.</p>
+            <h1 class="text-2xl font-bold mb-6">Aplikacija za urejanje skupinskih stroškov</h1>
 
-    <div class="flex justify-between">
-        
-        <div class="w-1/2">
-            
-        </div>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-8">
+                <!-- ... your expense table content ... -->
+            </div>
 
-        
-        <div class="w-1/2">
-            
+            <div class="mb-8">
+                <h2 class="text-lg font-bold mb-2">Total Expenses:</h2>
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                User
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Total Expense
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let userExpense of userTotalExpenses" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ getUserName(userExpense.userId) }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ userExpense.totalExpense | currency: 'EUR' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-8 flex flex-col" style="height: 400px;">
+                <h2 class="text-lg font-bold mb-2">User Expenses Chart:</h2>
+                <canvas id="userExpensesChart" class="flex-1" width="400" height="300"></canvas>
+            </div>
+
         </div>
     </div>
 </div>
