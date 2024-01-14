@@ -1,66 +1,95 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
+import {ActivatedRoute} from "@angular/router";
+import {Observable, Subject} from "rxjs";
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CostsService {
+export class CostsService implements OnInit{
+  private name: Subject<string> = new Subject<string>();
+  constructor(private httpClient: HttpClient,private router:ActivatedRoute) {
 
-  constructor(private httpClient: HttpClient) { }
+  }
+
+  ngOnInit(): void {
+
+  }
+
 
 
   // Zamenjat szi backendm
   private createdRooms: string[] = [];
 
-  expenses = [ 
-    { id: 0,
-      expenseName: 'Gas money', 
-      paidBy: 0, 
-      price: 100, 
-      date: '2. 1. 2024', 
-      users: [ {userId: 0, percentage: 40}, {userId: 1, percentage: 60} ], 
-      description: 'Lorem ipsum ' },
+  expenses:Array<{
+    "id": number;
+    "expenseName": string;
+    "paidBy": number;
+    "price": number;
+    "date": string;
+    "users": any[];
+    "description": string;
+  }> = [];
 
-    { id: 1,
-      expenseName: 'Lunch at lunch place', 
-      paidBy: 1, 
-      price: 50.44, 
-      date: '3. 2. 2022', 
-      users: [ {userId: 0, percentage: 33.3}, {userId: 1, percentage: 33.3}, {userId: 2, percentage: 33.3} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' },
+  users:Array<{
+    "id":number;
+    "name":string;
+  }> = [];
 
-    { id: 2,
-      expenseName: 'Lunch at lunch place2', 
-      paidBy: 2, 
-      price: 503.44, 
-      date: '3. 2. 2022', 
-      users: [ {userId: 0, percentage: 30}, {userId: 1, percentage: 50}, {userId: 2, percentage: 20} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. elit. Praesent aliquet tincidunt purus at ornare. ' },
 
-    { id: 3,
-      expenseName: 'Lunch at lunch place3', 
-      paidBy: 1, 
-      price: 210.44, 
-      date: '3. 2. 2022', 
-      users: [ {userId: 0, percentage: 0}, {userId: 1, percentage: 50}, {userId: 2, percentage: 50} ],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. ' },
-  ];
-
-  users = [
-    { id: 0, name: 'Miha' },
-    { id: 1, name: 'Bojan' },
-    { id: 2, name: 'Jože' },
-  ];
-
+  setData(data:string){
+    console.log(data)
+    this.name.next(data)
+    this.getExpenses(data)
+    this.getUsers(data)
+  }
 
 
   /**
    * Get expenses
    * @returns all the expenses
    */
-  getExpenses() {
-    return this.httpClient.get<any[]>('http://localhost:3000/expenses');
+  getExpenses(name:string) {
+    var subject = new Subject<any[]>();
+    this.httpClient.post<{message:string,expanses:any[]}>('http://localhost:3000/expenses',{name:name})
+        .subscribe((response) => {
+          this.expenses=[...response["expanses"]]
+          subject.next([...response["expanses"]])
+        });
+    return subject
+  }
+
+  getUsers(name:string) {
+    var subject = new Subject<any[]>();
+    this.httpClient.post<{message:string,users:any[]}>('http://localhost:3000/users',{name:name})
+        .subscribe((response) => {
+          this.users=[...response["users"]]
+          subject.next([...response["users"]])
+        });
+    return subject;
+  }
+
+  addExpenseService(newExpense:any,name:string) {
+    this.httpClient.post<any>('http://localhost:3000/addExpenses',{name:name,expense:newExpense})
+        .subscribe((response) => {
+
+        });
+  }
+
+  addUserService(name:string) {
+    this.httpClient.post<any>('http://localhost:3000/addUser',{name:name,users:this.users})
+        .subscribe((response) => {
+
+        });
+  }
+
+  editExpenseService(name:string) {
+    this.httpClient.post<any>('http://localhost:3000/editExpense',{name:name,expense:this.expenses})
+        .subscribe((response) => {
+
+        });
   }
 
   /**
@@ -82,28 +111,30 @@ export class CostsService {
    * @param description - description
    * Expense index - incremental
    */
-  addExpense(expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string) {
+  addExpense(expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string,name:string) {
     let paidByInt: number = +paidBy;
     const newIndex = this.expenses.length > 0 ? this.expenses[this.expenses.length - 1].id+1 : 0;
     const newExpense = { id: newIndex, expenseName: expenseName, paidBy: paidByInt, price: price, date: date, users: users, description: description};
     this.expenses.push(newExpense);
+    this.addExpenseService(newExpense,name)
   }
 
   /**
    * Remove expense with provided id
    * @param providedExpenseId - expense id for removal
    */
-  removeExpense(providedExpenseId: number): void {
+  removeExpense(providedExpenseId: number,name:string): void {
     const indexToRemove = this.expenses.findIndex(expense => expense.id === providedExpenseId);
     if (indexToRemove === -1) {
       throw new Error(`Expense with ID ${providedExpenseId} not found.`);
     }
     this.expenses.splice(indexToRemove, 1);
+    this.editExpenseService(name)
   }
-  
+
   /**
    * Update expense
-   * @param expenseId - what expense to update 
+   * @param expenseId - what expense to update
    * @param expenseName - expense name
    * @param paidBy - who paid for it
    * @param price - total price
@@ -111,7 +142,7 @@ export class CostsService {
    * @param users - price split between users
    * @param description - description
    */
-  updateExpense(expenseId: number, expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string) {
+  updateExpense(expenseId: number, expenseName: string, paidBy: number, price: number, date: string, users: { userId: number; percentage: number }[], description: string, name:string) {
     const existingExpenseIndex = this.expenses.findIndex(expense => expense.id === expenseId); //Get expense
     let paidByInt: number = +paidBy; //convert to int
     if (existingExpenseIndex !== -1) {
@@ -125,6 +156,7 @@ export class CostsService {
         users: users,
         description: description
       };
+      this.editExpenseService(name)
     } else {
       // Expense not found, you can handle this case as needed
       console.error(`Expense with id ${expenseId} not found.`);
@@ -148,22 +180,14 @@ export class CostsService {
     return this.expenses.reduce((total, expense) => total + expense.price, 0);
   }
 
-  
-  /**
-   * Returns user data
-   * @returns array of users
-   */
-  getUsers() {
-    return this.users;
-  }
-
   /**
    * Add user
    * @param username - provide user name
    */
-  addUser(username: string) {
+  addUser(username: string,name:string) {
     const lastUserId = this.users.length > 0 ? this.users[this.users.length - 1].id : -1;
     this.users.push({ id: lastUserId + 1, name: username });
+    this.addUserService(name)
   }
 
   /**
@@ -177,7 +201,7 @@ export class CostsService {
   }
 
   /**
-   * 
+   *
    * @returns - users array length
    */
   getUsersLenght() {
@@ -198,10 +222,10 @@ export class CostsService {
           const share = (user.percentage / 100) * price;
           // If user didnt pay the actual expense add to his debt
           if (user.userId !== paidBy) {
-            
+
             const debtor = user.userId;
             const amount = share;
-            
+
             const existingUserIndex = userDebts.findIndex(debt => debt.userId === paidBy);
 
             if (existingUserIndex !== -1) {
@@ -220,7 +244,7 @@ export class CostsService {
               userDebts.push({ userId: paidBy, debts: [{ userId: debtor, amount: amount }] });
             }
           }
-      
+
       });
     });
     return userDebts;
@@ -228,11 +252,11 @@ export class CostsService {
 
   createRoom(roomName: string, roomPassword: string) {
     // Check if the room with the same name already exists
-    if (this.createdRooms.includes(roomName)) {
-      return ('Room with the same name already exists');
-    }
-    this.createdRooms.push(roomName);
-    return (roomName);
+    console.log("Create room")
+    return this.httpClient.post<any[]>('http://localhost:3000/createRoom',{
+      name:roomName,
+      pass:roomPassword
+    })
   }
 
 
@@ -270,10 +294,10 @@ export class CostsService {
           const share = (user.percentage / 100) * price;
           // If user didnt pay the actual expense add to his debt
           if (user.userId !== paidBy) {
-            
+
             const debtor = user.userId;
             const amount = share;
-            
+
             const existingUserIndex = userDebts.findIndex(debt => debt.userId === paidBy);
 
             if (existingUserIndex !== -1) {
@@ -292,7 +316,7 @@ export class CostsService {
               userDebts.push({ userId: paidBy, debts: [{ userId: debtor, amount: amount }] });
             }
           }
-      
+
       });
     });
     return userDebts;

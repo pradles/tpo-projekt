@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CostsService } from '../../services/costs.service';
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 @Component({
   selector: 'app-join-room',
@@ -19,8 +20,8 @@ export class JoinRoomComponent {
   removeExpenseId = -1;
   modalMessage = '';
 
-  constructor(private authService: AuthService, 
-              private router: Router, 
+  constructor(private authService: AuthService,
+              private router: Router,
               private cost: CostsService) {}
 
   toggleCreateRoom() {
@@ -30,9 +31,10 @@ export class JoinRoomComponent {
   createNewRoom() {
     if (this.roomName && this.roomPassword) {
       if (this.roomPassword === this.roomPasswordRepeat) {
-        console.log(this.cost.createRoom(this.roomName, this.roomPassword));
+        const req = this.cost.createRoom(this.roomName, this.roomPassword);
+        req.subscribe();
         this.toggleCreateRoom();
-        this.roomName = ''; 
+        this.roomName = '';
         this.roomPassword = '';
         this.roomPasswordRepeat = '';
       } else {
@@ -59,17 +61,19 @@ export class JoinRoomComponent {
   }
 
   enter(): void {
-    const isAuthenticated = this.authService.enter(this.roomName, this.roomPassword);
+    const isAuthenticated = this.authService.enter(this.roomName, this.roomPassword).subscribe((value) => {
+      if (value.logged) {
+        // Do something after successful login
+        console.log('Login successful!');
+        console.log(value)
+        // Navigate to the dashboard
+        this.router.navigate(['/'+value.roomName+'/dashboard']);
+      } else {
+        // Do something if login fails
+        console.log('Login failed. Check your credentials.');
+      }
+    });
 
-    if (isAuthenticated) {
-      // Do something after successful login
-      console.log('Login successful!');
-      
-      // Navigate to the dashboard
-      this.router.navigate(['/dashboard']);
-    } else {
-      // Do something if login fails
-      console.log('Login failed. Check your credentials.');
-    }
+
   }
 }

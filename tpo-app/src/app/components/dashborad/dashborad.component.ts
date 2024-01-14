@@ -10,6 +10,7 @@ Chart.register(...registerables);
 })
 export class DashboradComponent implements OnInit, AfterViewInit {
   userExpensesChart: any;
+  name:string = "";
   userTotalExpenses: { userId: number; totalExpense: number }[] = [];
 
   constructor(private costsService: CostsService, private cdr: ChangeDetectorRef) {}
@@ -54,7 +55,7 @@ export class DashboradComponent implements OnInit, AfterViewInit {
     return this.costsService.getUserName(id);
   }
 
-  
+
   updateView(): void {
     this.cdr.detectChanges();
   }

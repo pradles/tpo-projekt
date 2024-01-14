@@ -20,7 +20,7 @@
   {
     "id": 1,
     "expenseName": "Lunch at lunch place",
-    "paidBy": 1,
+    "paidBy": 0,
     "price": 50.44,
     "date": "2022-02-03",
     "users": [
@@ -64,7 +64,7 @@
   {
     "id": 3,
     "expenseName": "Lunch at lunch place3",
-    "paidBy": 1,
+    "paidBy": 0,
     "price": 210.44,
     "date": "2022-02-03",
     "users": [
@@ -85,26 +85,28 @@
   },
   {
     "id": 4,
-    "name": ""
-  },
-  {
-    "id": 5,
-    "name": ""
-  },
-  {
-    "id": 6,
-    "name": ""
-  },
-  {
-    "id": 7,
-    "name": ""
-  },
-  {
-    "id": 8,
-    "name": ""
-  },
-  {
-    "id": 9,
-    "name": ""
+    "expenseName": "Test",
+    "paidBy": 3,
+    "price": 1000,
+    "date": "2024-01-14",
+    "users": [
+      {
+        "userId": 0,
+        "percentage": 25
+      },
+      {
+        "userId": 1,
+        "percentage": 25
+      },
+      {
+        "userId": 2,
+        "percentage": 25
+      },
+      {
+        "userId": 3,
+        "percentage": 25
+      }
+    ],
+    "description": "Test"
   }
 ]

@@ -1,7 +1,8 @@
 // modal.component.ts
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import {Component, Input, Output, EventEmitter, HostListener, OnInit} from '@angular/core';
 
 import { CostsService } from '../../services/costs.service';
+import {ActivatedRoute} from "@angular/router";
 
 
 @Component({
@@ -9,9 +10,14 @@ import { CostsService } from '../../services/costs.service';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent {
+export class ModalComponent implements OnInit{
+  name = "";
 
-  constructor(private costsService: CostsService) {}
+  constructor(private costsService: CostsService,private route:ActivatedRoute) {}
+
+  ngOnInit() {
+    this.name = this.route.snapshot.params['name']
+  }
 
   @Input() isModalOpen: boolean = false;
   @Input() message: string = '';
@@ -42,7 +48,7 @@ export class ModalComponent {
    * Remove expense with the selected expense id
    */
   removeExpense() {
-    this.costsService.removeExpense(this.removeExpenseId ?? -1);
+    this.costsService.removeExpense(this.removeExpenseId ?? -1,this.name);
   }
 
 }

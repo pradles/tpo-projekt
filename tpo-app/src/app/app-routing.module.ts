@@ -10,11 +10,11 @@ import { UsersComponent } from './components/users/users.component';
 import { JoinRoomComponent } from './components/join-room/join-room.component';
 
 const routes: Routes = [
-  { path: 'dashboard', component: DashboradComponent, canActivate: [AuthGuard] },
-  { path: 'documentation', component: DocumentationComponent, canActivate: [AuthGuard] },
-  { path: 'expenses', component: ExpensesComponent, canActivate: [AuthGuard] },
-  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
-  { path: 'options', component: OptionsComponent, canActivate: [AuthGuard] },
+  { path: ':name/dashboard', component: DashboradComponent, canActivate: [AuthGuard] },
+  { path: ':name/documentation', component: DocumentationComponent, canActivate: [AuthGuard] },
+  { path: ':name/expenses', component: ExpensesComponent, canActivate: [AuthGuard] },
+  { path: ':name/users', component: UsersComponent, canActivate: [AuthGuard] },
+  { path: ':name/options', component: OptionsComponent, canActivate: [AuthGuard] },
   { path: 'join-room', component: JoinRoomComponent },
   { path: '', redirectTo: '/join-room', pathMatch: 'full' } // Default route
 ];

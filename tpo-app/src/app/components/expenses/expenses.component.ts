@@ -3,6 +3,7 @@ import { CostsService } from '../../services/costs.service';
 import { Observable } from 'rxjs';
 
 import { DatePipe } from '@angular/common';
+import {ActivatedRoute} from "@angular/router";
 
 
 @Component({
@@ -13,18 +14,27 @@ import { DatePipe } from '@angular/common';
 })
 export class ExpensesComponent implements OnInit{
   date: any;
-
-  constructor(private costsService: CostsService, private datePipe: DatePipe, private ngZone: NgZone) {
+  name:string = ""
+  users:any[] =[];
+  constructor(private costsService: CostsService, private datePipe: DatePipe, private ngZone: NgZone,private route:ActivatedRoute) {
       this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     }
-    
+
+
   // expenses = this.costsService.getExpenses();
   expenses$: Observable<any[]> = new Observable<any[]>();
   ngOnInit() {
-    this.expenses$ = this.costsService.getExpenses();
+    this.name = this.route.snapshot.params['name']
+    this.expenses$ = this.costsService.getExpenses(this.name);
+    this.costsService.getUsers(this.name).subscribe((value:any[]) => {
+      this.users = [...value];
+      this.usersPercentages = this.users.map((_, index) => ({
+        userId: index,
+        percentage: +(100 / this.users.length).toFixed(1),
+      }));
+    })
   }
 
-  users = this.costsService.getUsers();
 
   expenseName: string = '';
   paidBy: number = -1;
@@ -45,7 +55,7 @@ export class ExpensesComponent implements OnInit{
   isModalOpen: boolean = false;
 
 
-  
+
   /**
    * Show / hide expenses details on click
    * @param providedExpensesIndex - what expense was clicked
@@ -78,8 +88,10 @@ export class ExpensesComponent implements OnInit{
    * Add expense with the necessary data
    */
   addExpense() {
+    console.log(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description,this.name)
     if(this.checkExpenseInput()){
-      this.costsService.addExpense(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
+      console.log("add")
+      this.costsService.addExpense(this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description,this.name);
       this.clearInputField();
     }
   }
@@ -89,7 +101,7 @@ export class ExpensesComponent implements OnInit{
    */
   updateExpense() {
     if(this.checkExpenseInput()){
-      this.costsService.updateExpense(this.editExpenseId,this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description);
+      this.costsService.updateExpense(this.editExpenseId,this.expenseName, this.paidBy, this.price, this.date, this.usersPercentages, this.description,this.name);
       this.clearInputField();
     }
   }
@@ -150,11 +162,12 @@ export class ExpensesComponent implements OnInit{
    * @returns true / false
    */
   checkExpenseInput() {
+    console.log(this)
     if (this.expenseName === '') {
       this.toggleModal('Expense name cannot be empty',-1);
       return false;
     }
-  
+
     if (this.paidBy === -1) {
       this.toggleModal('Please select who paid for the expense');
       return false;
@@ -169,12 +182,12 @@ export class ExpensesComponent implements OnInit{
       this.toggleModal('Price must be greater than 0');
       return false;
     }
-  
+
     if (!this.checkPercentages()) {
       this.toggleModal('Invalid percentages. Please adjust.');
       return false;
     }
-  
+
     // If all conditions pass, return true
     return true;
   }

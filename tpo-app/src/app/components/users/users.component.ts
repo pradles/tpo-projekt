@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CostsService } from '../../services/costs.service';
 import { Observable } from 'rxjs';
+import {ActivatedRoute} from "@angular/router";
 
 
 @Component({
@@ -10,16 +11,19 @@ import { Observable } from 'rxjs';
 })
 export class UsersComponent {
   users: any[] = [];
+  name:string = ""
   // expenses: any[] = [];
   expenses$: Observable<any[]> = new Observable<any[]>();
-
-  userDebts: any[] = [];
+  users$: Observable<any[]> = new Observable<any[]>();
+    userDebts: any[] = [];
 
   username: string = ''
 
-  constructor(private costsService: CostsService) {
-    this.users = this.costsService.getUsers();
-    this.expenses$ = this.costsService.getExpenses();
+  constructor(private costsService: CostsService,private route:ActivatedRoute) {
+    this.name = this.route.snapshot.params['name']
+
+    this.expenses$ = this.costsService.getExpenses(this.name);
+    this.users$ = this.costsService.getUsers(this.name)
     this.userDebts = this.costsService.calculateDebts();
   }
 
@@ -37,7 +41,7 @@ export class UsersComponent {
    */
   addUser() {
     if(this.checkUsernameInput()){
-      this.costsService.addUser(this.username);
+      this.costsService.addUser(this.username,this.name);
       this.username = '';
     }
   }
