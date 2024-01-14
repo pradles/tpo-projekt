@@ -1,12 +1,13 @@
-
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CostsService {
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
 
 
   // Zamenjat szi backendm
@@ -59,7 +60,7 @@ export class CostsService {
    * @returns all the expenses
    */
   getExpenses() {
-    return this.expenses;
+    return this.httpClient.get<any[]>('http://localhost:3000/expenses');
   }
 
   /**

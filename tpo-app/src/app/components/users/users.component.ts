@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CostsService } from '../../services/costs.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -9,14 +10,16 @@ import { CostsService } from '../../services/costs.service';
 })
 export class UsersComponent {
   users: any[] = [];
-  expenses: any[] = [];
+  // expenses: any[] = [];
+  expenses$: Observable<any[]> = new Observable<any[]>();
+
   userDebts: any[] = [];
 
   username: string = ''
 
   constructor(private costsService: CostsService) {
     this.users = this.costsService.getUsers();
-    this.expenses = this.costsService.getExpenses();
+    this.expenses$ = this.costsService.getExpenses();
     this.userDebts = this.costsService.calculateDebts();
   }
 

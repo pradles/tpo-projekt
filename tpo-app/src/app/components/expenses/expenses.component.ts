@@ -1,5 +1,7 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit  } from '@angular/core';
 import { CostsService } from '../../services/costs.service';
+import { Observable } from 'rxjs';
+
 import { DatePipe } from '@angular/common';
 
 
@@ -9,14 +11,19 @@ import { DatePipe } from '@angular/common';
   styleUrl: './expenses.component.css',
   providers: [DatePipe],
 })
-export class ExpensesComponent {
+export class ExpensesComponent implements OnInit{
   date: any;
 
   constructor(private costsService: CostsService, private datePipe: DatePipe, private ngZone: NgZone) {
       this.date = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     }
     
-  expenses = this.costsService.getExpenses();
+  // expenses = this.costsService.getExpenses();
+  expenses$: Observable<any[]> = new Observable<any[]>();
+  ngOnInit() {
+    this.expenses$ = this.costsService.getExpenses();
+  }
+
   users = this.costsService.getUsers();
 
   expenseName: string = '';

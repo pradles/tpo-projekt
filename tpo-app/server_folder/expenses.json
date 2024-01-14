@@ -1,0 +1,53 @@
+[
+    {
+        "id": 0,
+        "expenseName": "u got that Gas money tho??",
+        "paidBy": 0,
+        "price": 100,
+        "date": "2024-01-02",
+        "users": [
+            {"userId": 0, "percentage": 40},
+            {"userId": 1, "percentage": 60}
+        ],
+        "description": "Lorem ipsum"
+    },
+    {
+        "id": 1,
+        "expenseName": "Lunch at lunch place",
+        "paidBy": 1,
+        "price": 50.44,
+        "date": "2022-02-03",
+        "users": [
+            {"userId": 0, "percentage": 33.3},
+            {"userId": 1, "percentage": 33.3},
+            {"userId": 2, "percentage": 33.3}
+        ],
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    },
+    {
+        "id": 2,
+        "expenseName": "Lunch at lunch place2",
+        "paidBy": 2,
+        "price": 503.44,
+        "date": "2022-02-03",
+        "users": [
+            {"userId": 0, "percentage": 30},
+            {"userId": 1, "percentage": 50},
+            {"userId": 2, "percentage": 20}
+        ],
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare. elit. Praesent aliquet tincidunt purus at ornare."
+    },
+    {
+        "id": 3,
+        "expenseName": "Lunch at lunch place3",
+        "paidBy": 1,
+        "price": 210.44,
+        "date": "2022-02-03",
+        "users": [
+            {"userId": 0, "percentage": 0},
+            {"userId": 1, "percentage": 50},
+            {"userId": 2, "percentage": 50}
+        ],
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet tincidunt purus at ornare."
+    }
+]

@@ -14,6 +14,8 @@ import { UsersComponent } from './components/users/users.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalComponent } from './components/modal/modal.component';
 import { DocumentationComponent } from './components/documentation/documentation.component';
+import { HttpClientModule } from '@angular/common/http';
+
 
 
 
@@ -34,7 +36,8 @@ import { DocumentationComponent } from './components/documentation/documentation
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
